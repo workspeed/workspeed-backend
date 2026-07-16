@@ -9,7 +9,7 @@ import { RoleUsuario } from '../enums/usuarioRole.enum';
 import { StatusUsuario } from '../enums/usuarioStatus.enum';
 
 @Entity({ name: 'tb_usuario' })
-export class EntityUsuario {
+export class Usuario {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
