@@ -1,3 +1,4 @@
+
 import {
   Column,
   CreateDateColumn,
@@ -6,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TipoPessoa } from '../enums/  tipoPessoa.enum';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
 
 @Entity({ name: 'tb_empresa' })
 export class Empresa {
@@ -61,4 +64,7 @@ export class Empresa {
     name: 'dt_atualizacao',
   })
   dataAtualizacao!: Date;
+
+  @Column({ name: 'nome_fantasia', type: 'varchar', length: 255 })
+  nomeFantasia!: string;
 }
