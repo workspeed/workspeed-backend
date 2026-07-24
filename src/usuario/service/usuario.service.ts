@@ -49,7 +49,7 @@ export class UsuarioService {
       },
     });
 
-    if (!usuario) {
+    if (usuario.length === 0) {
       throw new BadRequestException('Usuario não encontrado');
     }
 
