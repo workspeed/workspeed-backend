@@ -33,12 +33,14 @@ export class Usuario {
   senha!: string;
 
   @Column({
+    name: 'role_usuario',
     type: 'enum',
     enum: RoleUsuario,
   })
   roleUsuario!: RoleUsuario;
 
   @Column({
+    name: 'status_usuario',
     type: 'enum',
     enum: StatusUsuario,
     default: StatusUsuario.ATIVO,
