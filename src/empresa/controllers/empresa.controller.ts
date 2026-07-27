@@ -10,8 +10,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateEmpresaDto } from '../dtos/create-empresa.dto';
-import { FiltroPeriodoDto } from '../dtos/filters/filtro-periodo.dto';
-import { FiltroEmpresaDto } from '../dtos/filters/filtro.empresa.dto';
+import { FiltroPeriodoDto } from '../../common/dtos/filtro-periodo.dto';
+import { FiltroEmpresaDto } from '../dtos/filters/filtro-empresa.dto';
 import { UpdateEmpresaDto } from '../dtos/update-empresa.dto';
 import { Empresa } from '../entities/empresa.entity';
 import { EmpresaService } from '../service/empresa.service';

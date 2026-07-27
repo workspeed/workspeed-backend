@@ -14,8 +14,8 @@ import {
   QueryFailedError,
   Repository,
 } from 'typeorm';
-import { FiltroPeriodoDto } from '../dtos/filters/filtro-periodo.dto';
-import { FiltroEmpresaDto } from '../dtos/filters/filtro.empresa.dto';
+import { FiltroPeriodoDto } from '../../common/dtos/filtro-periodo.dto';
+import { FiltroEmpresaDto } from '../dtos/filters/filtro-empresa.dto';
 import { UpdateEmpresaDto } from '../dtos/update-empresa.dto';
 import { Empresa } from '../entities/empresa.entity';
 import { TipoPessoa } from '../enums/tipoPessoa.enum';
@@ -51,6 +51,8 @@ export class EmpresaService {
   }
 
   async findByName(nome: string): Promise<Empresa[]> {
+    nome = nome.trim();
+
     const empresas = await this.empresaRepository.find({
       where: [
         { nomeFantasia: ILike(`%${nome}%`) },
@@ -126,6 +128,7 @@ export class EmpresaService {
 
     return empresas;
   }
+
   async create(createEmpresaDto: CreateEmpresaDto): Promise<Empresa> {
     const empresaExistente = await this.empresaRepository.findOne({
       where: [
