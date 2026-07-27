@@ -6,8 +6,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, QueryFailedError, Repository } from 'typeorm';
+import {
+  Between,
+  FindOptionsWhere,
+  ILike,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
+import { FiltroPeriodoDto } from '../../common/dtos/filtro-periodo.dto';
 import { CreateUsuarioDto } from '../dtos/create-usuario.dto';
+import { FiltroUsuarioDto } from '../dtos/filters/filtro-usuario.dto';
 import { UpdateUsuarioDto } from '../dtos/update-usuario.dto';
 import { Usuario } from './../entities/usuario.entity';
 
@@ -21,7 +29,7 @@ export class UsuarioService {
   async findAll(): Promise<Usuario[]> {
     return await this.usuarioRepository.find({
       order: {
-        id: 'ASC',
+        dataCriacao: 'DESC',
       },
     });
   }
@@ -47,6 +55,10 @@ export class UsuarioService {
       where: {
         nome: ILike(`%${nome}%`),
       },
+
+      order: {
+        dataCriacao: 'DESC',
+      },
     });
 
     if (usuario.length === 0) {
@@ -54,6 +66,44 @@ export class UsuarioService {
     }
 
     return usuario;
+  }
+
+  async filter(filtro: FiltroUsuarioDto): Promise<Usuario[]> {
+    const where: FindOptionsWhere<Usuario> = {};
+
+    if (filtro.roleUsuario) {
+      where.roleUsuario = filtro.roleUsuario;
+    }
+
+    if (filtro.statusUsuario) {
+      where.statusUsuario = filtro.statusUsuario;
+    }
+
+    return this.usuarioRepository.find({
+      where,
+      order: {
+        dataCriacao: 'DESC',
+      },
+    });
+  }
+
+  async findByPeriod(filtro: FiltroPeriodoDto): Promise<Usuario[]> {
+    const dataInicio = new Date(filtro.dataInicio);
+    const dataFim = filtro.dataFim ? new Date(filtro.dataFim) : new Date();
+
+    const usuarios = await this.usuarioRepository.find({
+      where: {
+        dataCriacao: Between(dataInicio, dataFim),
+      },
+    });
+
+    if (usuarios.length === 0) {
+      throw new NotFoundException(
+        'Nenhum usuário encontrado no período informado',
+      );
+    }
+
+    return usuarios;
   }
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
