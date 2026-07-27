@@ -18,11 +18,10 @@ export function DataMaiorOuIgual(
 
       validator: {
         validate(valor: unknown, argumentos: ValidationArguments) {
-          const [nomeCampoComparacao] = argumentos.constraints;
+          const nomeCampoComparacao = String(argumentos.constraints[0]);
 
-          const valorCampoComparacao = (
-            argumentos.object as Record<string, unknown>
-          )[nomeCampoComparacao];
+          const objeto = argumentos.object as Record<string, unknown>;
+          const valorCampoComparacao = objeto[nomeCampoComparacao];
 
           if (!valor || !valorCampoComparacao) {
             return true;
