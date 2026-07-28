@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Usuario } from '../../usuario/entities/usuario.entity';
 import { TipoPessoa } from '../enums/tipoPessoa.enum';
 
 @Entity({ name: 'tb_empresa' })
@@ -62,4 +64,7 @@ export class Empresa {
     name: 'dt_atualizacao',
   })
   dataAtualizacao!: Date;
+
+  @OneToMany(() => Usuario, (usuario) => usuario.empresa)
+  usuarios: Usuario[];
 }

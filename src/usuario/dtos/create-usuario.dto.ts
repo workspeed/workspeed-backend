@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsString,
+  IsUUID,
   Length,
   Matches,
   MaxLength,
@@ -41,4 +42,8 @@ export class CreateUsuarioDto {
     message: 'Status inválido.',
   })
   statusUsuario!: StatusUsuario;
+
+  @IsNotEmpty({ message: 'A empresa é obrigatória' })
+  @IsUUID('4', { message: 'ID da empresa inválido' })
+  empresaId!: string;
 }
