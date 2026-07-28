@@ -167,6 +167,7 @@ export class EmpresaService {
   ): Promise<Empresa> {
     const empresa = await this.findById(id);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const tipoPessoaFinal = updateEmpresaDto.tipoPessoa ?? empresa.tipoPessoa;
     const documentoFinal = updateEmpresaDto.documento ?? empresa.documento;
 
