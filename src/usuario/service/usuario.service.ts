@@ -14,6 +14,7 @@ import {
   Repository,
 } from 'typeorm';
 import { FiltroPeriodoDto } from '../../common/dtos/filtro-periodo.dto';
+import { EmpresaService } from '../../empresa/service/empresa.service';
 import { CreateUsuarioDto } from '../dtos/create-usuario.dto';
 import { FiltroUsuarioDto } from '../dtos/filters/filtro-usuario.dto';
 import { UpdateUsuarioDto } from '../dtos/update-usuario.dto';
@@ -24,10 +25,12 @@ export class UsuarioService {
   constructor(
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
+    private readonly empresaService: EmpresaService,
   ) {}
 
   async findAll(): Promise<Usuario[]> {
     return await this.usuarioRepository.find({
+      relations: { empresa: true },
       order: {
         dataCriacao: 'DESC',
       },
@@ -39,6 +42,7 @@ export class UsuarioService {
       where: {
         id,
       },
+      relations: { empresa: true },
     });
 
     if (!usuario) {
@@ -55,7 +59,7 @@ export class UsuarioService {
       where: {
         nome: ILike(`%${nome}%`),
       },
-
+      relations: { empresa: true },
       order: {
         dataCriacao: 'DESC',
       },
@@ -81,6 +85,7 @@ export class UsuarioService {
 
     return this.usuarioRepository.find({
       where,
+      relations: { empresa: true },
       order: {
         dataCriacao: 'DESC',
       },
@@ -95,6 +100,7 @@ export class UsuarioService {
       where: {
         dataCriacao: Between(dataInicio, dataFim),
       },
+      relations: { empresa: true },
     });
 
     if (usuarios.length === 0) {
@@ -107,6 +113,10 @@ export class UsuarioService {
   }
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
+    const { empresaId, ...dadosUsuario } = createUsuarioDto;
+
+    const empresa = await this.empresaService.findById(empresaId);
+
     const usuarioExistente = await this.usuarioRepository.findOne({
       where: {
         email: createUsuarioDto.email,
@@ -118,7 +128,10 @@ export class UsuarioService {
     }
 
     try {
-      const novoUsuario = this.usuarioRepository.create(createUsuarioDto);
+      const novoUsuario = this.usuarioRepository.create({
+        ...dadosUsuario,
+        empresa,
+      });
       return await this.usuarioRepository.save(novoUsuario);
     } catch (error) {
       if (
@@ -138,6 +151,7 @@ export class UsuarioService {
     updateUsuarioDto: UpdateUsuarioDto,
   ): Promise<Usuario> {
     const usuario = await this.findById(id);
+    const { empresaId, ...dadosUsuario } = updateUsuarioDto;
 
     if (updateUsuarioDto.email && updateUsuarioDto.email !== usuario.email) {
       const emailExiste = await this.usuarioRepository.exists({
@@ -151,7 +165,11 @@ export class UsuarioService {
       }
     }
 
-    Object.assign(usuario, updateUsuarioDto);
+    if (empresaId) {
+      usuario.empresa = await this.empresaService.findById(empresaId);
+    }
+
+    Object.assign(usuario, dadosUsuario);
 
     return this.usuarioRepository.save(usuario);
   }

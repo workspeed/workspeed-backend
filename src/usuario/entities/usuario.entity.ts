@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Empresa } from '../../empresa/entities/empresa.entity';
 import { RoleUsuario } from '../enums/usuarioRole.enum';
 import { StatusUsuario } from '../enums/usuarioStatus.enum';
 
@@ -56,4 +59,10 @@ export class Usuario {
     name: 'dt_atualizacao',
   })
   dataAtualizacao!: Date;
+
+  @ManyToOne(() => Empresa, (empresa) => empresa.usuarios, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'empresa_id' })
+  empresa!: Empresa;
 }
